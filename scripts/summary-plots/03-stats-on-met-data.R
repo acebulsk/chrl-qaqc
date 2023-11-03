@@ -2,14 +2,16 @@
 
 library(tidyverse)
 
-cur_station <- 'mountcayley'
+gap_fill_path <- paste0('data/gap-fill/gap_fill_', cur_stn, '.rds')
 
-cur_year <- format(Sys.Date(), '%Y') |> as.numeric()
-min_year <- min(monthly_air_temp_summary$year) |> as.numeric()
+qc_fill_data <- readRDS(gap_fill_path)
+
+max_date <- max(qc_fill_data$datetime) |> as.Date()
+min_date <- min(qc_fill_data$datetime) |> as.Date()
+max_year <- max(format(qc_fill_data$datetime, '%Y')) |> as.numeric()
+min_year <- min(format(qc_fill_data$datetime, '%Y')) |> as.numeric()
 
 perc_records_in_month <- 0.9
-
-qc_fill_data <- readRDS('data/gap-fill/gap_fill_mountcayley.rds')
 
 qc_fill_data$month_num <- format(qc_fill_data$datetime, '%m')
 qc_fill_data$month_short <- format(qc_fill_data$datetime, '%b')
@@ -19,7 +21,7 @@ qc_fill_data$records_filter <- lubridate::days_in_month(qc_fill_data$datetime)*2
 
 # avgs for over all years, but do not include the current year
 glob_avg <- qc_fill_data |> 
-  filter(year != cur_year) |> 
+  filter(year != max_year) |> 
   group_by(month_num) |> 
   mutate(n_records_in_month = n(),
          has_enough_records = n_records_in_month > records_filter) |> 
@@ -52,10 +54,10 @@ qc_fill_data <- qc_fill_data |> left_join(
   glob_avg , by = 'month_num'
 )
 
-# output monthly (all years separate) stats to csv 
+# output monthly (all years separate) stats to pretty 
 
 tbl_out_monthly <- monthly_air_temp_summary |> 
-  mutate(station_name = cur_station,
+  mutate(station_name = cur_stn,
          variable_name = 'air_temp',
          unit = "deg. C") |> 
   select(station_name,
@@ -72,7 +74,7 @@ tbl_out_monthly <- monthly_air_temp_summary |>
 # aggregate years for overall monthly normals 
 
 tbl_out_monthly_normals <- glob_avg |> 
-  mutate(station_name = cur_station,
+  mutate(station_name = cur_stn,
          variable_name = 'air_temp',
          unit = "deg. C") |> 
   select(station_name,
@@ -85,19 +87,18 @@ tbl_out_monthly_normals <- glob_avg |>
          variable_name,
          unit)
 
-
 write.csv(tbl_out_monthly,
           paste0(
             'data/stat_summary/',
-            cur_station,
-            'air_temp_stats_of_each_month_for_each_year.csv'
+            cur_stn,
+            '_air_temp_stats_of_each_month_for_each_year.csv'
           ),
           row.names = F)
           
 write.csv(tbl_out_monthly_normals,
           paste0(
             'data/stat_summary/',
-            cur_station,
-            'air_temp_monthly_normals.csv'
+            cur_stn,
+            '_air_temp_monthly_normals.csv'
           ),
           row.names = F)
