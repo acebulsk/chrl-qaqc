@@ -33,6 +33,18 @@ frac_records_required <- 0.9
 
 # start qaqc ----
 
+# make a continuous time series 
+date_seq <- wxlogR::datetime_seq_full(met_df$datetime, timestep = logger_tstep)
+
+missing_records <- length(date_seq) - nrow(met_df)
+
+print(paste('The number of records missing is: ', missing_records))
+
+date_seq_df <- data.frame(datetime = date_seq)
+
+df_cont <- date_seq_df |> 
+  left_join(met_df, by = 'datetime')
+
 ## station specific qaqc ---- 
 
 wx_raw_met_long <- wx_raw |> pivot_longer(c('Air_Temp',

@@ -1,5 +1,5 @@
 
-color_palette <- c(viridisLite::viridis(n = (cur_year - min_year),
+color_palette <- c(viridisLite::viridis(n = (max_year - min_year),
                                         option = 'D'),'black')
 
 # now add in mean and cis
@@ -8,7 +8,7 @@ ggplot(qc_fill_data, aes(plot_time, Air_Temp))  +
     colour = as.factor(year),
     group = as.factor(year),
   ),
-  alpha = ifelse(qc_fill_data$year == cur_year, 1, 0.5)) +
+  alpha = ifelse(qc_fill_data$year == max_year, 1, 0.5)) +
   # geom_line(data = glob_avg, aes(x = month_num, y = glob_max_monthly_temp, group = 1, linetype = 'Max')) +
   # geom_line(data = glob_avg, aes(x = month_num, y = glob_mean_monthly_temp, group = 1, linetype = 'Mean')) +
   # geom_line(data = glob_avg, aes(x = month_num, y = glob_min_monthly_temp, group = 1, linetype = 'Min')) +
