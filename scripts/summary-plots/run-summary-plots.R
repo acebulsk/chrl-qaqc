@@ -1,5 +1,5 @@
 # script to run the full summary plot process
-
+# NOTE HAVE TO STEP THROUGH THIS LINE BY LINE TO AVOID EXTERNAL POINTER ERROR
 # setup ----
 
 library(dplyr)
@@ -20,33 +20,33 @@ options(ggplot2.discrete.colour= c(
 ))
 
 chrl_stations <- c(
-  # 'apelake',
-  # 'mountcayley',
-  # 'claytonfalls',
-  # 'lowercain',
-  # 'mountarrowsmith',
-  # 'tetrahedron',
-  # 'machmellkliniklini',
-  # 'eastbuxton',
+  'apelake',
+  'mountcayley',
+  'claytonfalls',
+  'lowercain',
+  'mountarrowsmith',
+  'tetrahedron',
+  'machmellkliniklini',
+  'eastbuxton'
   # 'datlamen', #TODO
   # 'rennellpass', #TODO
-  'mountmaya',
-  'machmell',
-  'klinaklini',
-  'plummerhut',
-  'homathko',
-  'cainridgerun',
-  'steph1',
-  'steph2',
-  'steph3',
-  'steph4',
-  'steph6',
-  'steph7',
-  'steph8',
-  'upperrussell',
-  'russellmain',
-  'uppercruickshank',
-  'perseverance'
+  # 'mountmaya',
+  # 'machmell',
+  # 'klinaklini',
+  # 'plummerhut',
+  # 'homathko',
+  # 'cainridgerun',
+  # 'steph1',
+  # 'steph2',
+  # 'steph3',
+  # 'steph4',
+  # 'steph6',
+  # 'steph7',
+  # 'steph8',
+  # 'upperrussell',
+  # 'russellmain',
+  # 'uppercruickshank',
+  # 'perseverance'
 )
 
 conn <- do.call(DBI::dbConnect, args)
@@ -56,19 +56,19 @@ for (stn in chrl_stations) {
   
   cur_stn <- stn # eventually loop through all stations...
   
-  # # load data ---
-  # source('scripts/summary-plots/00-load-data.R')
-  # 
-  # # qaqc loop ---
-  # 
-  # print(paste("Starting QAQC for", cur_stn))
-  # 
-  # # eventually pull from Juliens QAQCd data
-  # 
-  # source('scripts/summary-plots/01-qaqc-met-data.R')
-  # source('scripts/summary-plots/02-gap-fill-met-data.R')
-  # 
-  # print(paste("Finished QAQC for", cur_stn))
+  # load data ---
+  source('scripts/summary-plots/00-load-data.R')
+
+  # qaqc loop ---
+
+  print(paste("Starting QAQC for", cur_stn))
+
+  # eventually pull from Juliens QAQCd data
+
+  source('scripts/summary-plots/01-qaqc-met-data.R')
+  source('scripts/summary-plots/02-gap-fill-met-data.R')
+
+  print(paste("Finished QAQC for", cur_stn))
 
   # stats ----
   

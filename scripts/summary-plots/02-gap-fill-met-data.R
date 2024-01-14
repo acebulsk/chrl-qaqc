@@ -22,6 +22,13 @@ if(!at_still_have_gaps == F){
   warning(paste0(cur_stn, " Air temp still has gaps."))
 }
 
-saveRDS(at_fill, gap_fill_path)
+# Julian has already gap filled snow depth data using 3 hr interpolation so tag
+# this on to this file as well 
+
+sd_fill <- wx_raw |> select(datetime, Snow_Depth_qaqc)
+
+df_fill <- left_join(at_fill, sd_fill)
+
+saveRDS(df_fill, gap_fill_path)
 
 # TODO fill larger gaps using regressions from other stations

@@ -1,8 +1,6 @@
 # qaqc precip data, could eventually combine with met qaqc
 
-raw_data_path <- paste0('data/clean-', cur_stn, '.rds')
-
-qaqc_data_path <- paste0('data/qaqc/qaqc_', cur_stn, '.rds')
+gap_fill_data_path <- paste0('data/gap-fill/gap_fill_', cur_stn, '.rds')
 
 # setup constants ----
 
@@ -14,12 +12,18 @@ if(cur_stn == 'lowercain'){
   wx_raw <- wx_raw |> filter(WatYr %in% c(2021, 2022))
 }
 
+
+if(cur_stn == 'apelake'){
+  wx_raw <- wx_raw[wx_raw$datetime > as.POSIXct('2016-10-01 00:00', tz = 'UTC'),]
+  wx_raw <- wx_raw |> filter(WatYr %in% c(2017, 2020, 2022, 2023, 2024))
+}
+
 # global filters
 
 glob_hi <- 2500
 glob_lo <- -2500
 
-empty_amount_threshold <- 100 # mm a bit conservative here to rm some other large breaks
+empty_amount_threshold <- 501 # this needs to be larger than the spike_loop_th so that spikes are not erroneously added as empties, i.e. we remove pos spikes first 
 max_gap_length <- 12 # max number of gaps to fill
 
 spike_th <- 25
@@ -31,7 +35,7 @@ small_drop_th <- 0.001 # this is used to eliminate
 flatline_window <- 6 # hrs
 
 # stdev filtering params
-window_length <- 24*3 # 3 days 
+window_length <- 24 # 
 lead_window <- list(1:window_length) # around 3 days to round out diurnal cycling
 lag_window <- list(-1:-window_length)
 frac_records_required <- 0.9
@@ -51,23 +55,67 @@ wx_raw <- date_seq_df |>
 
 ## apply global max / min ----
 
-wx_raw_met_long <- wx_raw |> pivot_longer(all_of(short_list))
+wx_raw_met_long <- wx_raw |> 
+  select(datetime, WatYr, all_of(short_list)) |> 
+  pivot_longer(all_of(short_list))
 
 wx_long_glob_qc <- wx_raw_met_long |> 
-  filter(value <= glob_hi,
-         value >= glob_lo)
+  mutate(value = case_when(
+    value >= glob_hi ~ NA,
+    value <= glob_lo ~ NA,
+    value == 0 ~ NA,
+    TRUE ~ value
+  )) |> as.data.frame()
 
 wx_long_glob_qc |>
-  # filter(WatYr == '2021') |>
+  # filter(WatYr == '2019') |>
   ggplot(aes(datetime, value)) +
   geom_line() +
   facet_wrap(~WatYr, nrow = 6, scales = 'free')
 
-plotly::ggplotly()
+# plotly::ggplotly()
+
+# TODO try stdev window to rm large high spots 
+
+# rm huge spikes ----
+
+# # try to handle some years that have huge spikes so they don't get erroneously added as empties
+# 
+# max_iter <- 0
+# 
+# spike_loop_rm <- wx_long_glob_qc |> as.data.frame()
+# 
+# # sd_wide is returned as the despiked df
+# while (max_iter < 1000) {
+#   
+#   cur_df <- spike_loop_rm |> 
+#     filter(is.na(value) == F) |> 
+#     CRHMr::deleteSpikes(
+#       colnum = 3,
+#       threshold = 500,
+#       spike_direction = 'hi'
+#     )
+#   
+#   if(all(cur_df==0)){
+#     break
+#   }
+#   
+#   spike_loop_rm <- cur_df
+#   
+#   max_iter <- max_iter + 1
+#   
+# }
+# 
+# spike_loop_rm |>
+#   # filter(WatYr == '2019') |>
+#   ggplot(aes(datetime, value)) +
+#   geom_line() +
+#   facet_wrap(~WatYr, nrow = 6, scales = 'free')
+# plotly::ggplotly()
 
 # rm empties ----
 
-pc_empty_amounts <- wx_raw_met_long |>
+pc_empty_amounts <- wx_long_glob_qc |>
   filter(is.na(value) == F) |> 
   mutate(empty_amount = lag(value) - value) |> 
   filter(empty_amount > empty_amount_threshold) |>
@@ -75,7 +123,7 @@ pc_empty_amounts <- wx_raw_met_long |>
   select(datetime, empty_amount) |>
   mutate(empty_amount_rolling = cumsum(empty_amount))
 
-pc_empty_correct <- wx_raw_met_long |>
+pc_empty_correct <- wx_long_glob_qc |>
   left_join(pc_empty_amounts, by = c('datetime')) |>
   fill(empty_amount_rolling, .direction = 'down') |>
   mutate(
@@ -86,7 +134,7 @@ pc_empty_correct <- wx_raw_met_long |>
   select(datetime, WatYr, value)
 
 pc_empty_correct |>
-  # filter(WatYr == '2021') |>
+  # filter(WatYr == '2024') |>
   ggplot(aes(datetime, value)) +
   geom_line() +
   facet_wrap(~WatYr, nrow = 6, scales = 'free')
@@ -147,47 +195,55 @@ plotly::ggplotly()
 pc_fltr <- weighingGauge4(pc_smooth,
                           quiet = F, smallDropThreshold = small_drop_th)
 
-eccc_df <- rbind(pc_smooth |> 
-        mutate(group = 'eccc_qc_1') |> 
-        rename(value = value_sg_filtered),
-      pc_spike_fill |> 
-        mutate(group = 'raw')) |>
-  rbind(
-    pc_fltr |> 
-      mutate(group = 'eccc_qc_2') |> 
-      rename(value = value_sg_filtered_PcpFiltPosT)
-  ) 
+## ---- 5 - write data out ----
 
-eccc_df |> 
-  ggplot(aes(datetime, value, colour = group)) + 
-  geom_line()
+met_df <- readRDS(gap_fill_data_path) |> left_join(pc_fltr) |> 
+  rename(PC = value_sg_filtered_PcpFiltPosT)
 
-plotly::ggplotly()
+saveRDS(met_df, gap_fill_data_path)
 
-# compare sergey too ----
-
-sg_pc <- read.csv('data/from-sergey/CainLower_presip_qaqc-ed.txt', skip = 1) |> 
-  slice(2:n()) |> 
-  mutate(datetime = as.POSIXct((as.numeric(MatLabTime) - 719529) * 86400, origin = "1970-01-01", tz = "UTC"),
-         datetime = round(datetime, 'hour')) |> 
-  select(datetime, Precip_raw, Precip_filtered) |> 
-  filter(datetime > '2020-10-01',
-         datetime < '2022-10-01',) |> 
-  mutate(sm_raw = as.numeric(Precip_raw) - 3921,
-         sm_filtered = as.numeric(Precip_filtered) - 3853) |> 
-  select(datetime, sm_raw, sm_filtered) |> 
-  pivot_longer(!datetime, names_to = 'group')
-
-compare_df <- rbind(eccc_df, sg_pc) 
-
-compare_df |> 
-  ggplot(aes(datetime, value, colour = group)) + 
-  geom_line()
-
-g <- plotly::ggplotly()
-
-htmltools::save_html(g, 'data/from-sergey/compare_sergey_eccc_precip_qaqc_interactive_plot.html')
-
-write.csv(compare_df, 'data/from-sergey/compare_sergey_eccc_precip_qaqc.csv',row.names = F)
+# compare data ... 
+# 
+# eccc_df <- rbind(pc_smooth |>
+#         mutate(group = 'eccc_qc_1') |>
+#         rename(value = value_sg_filtered),
+#       pc_spike_fill |>
+#         mutate(group = 'raw')) |>
+#   rbind(
+#     pc_fltr |>
+#       mutate(group = 'eccc_qc_2') |>
+#       rename(value = value_sg_filtered_PcpFiltPosT)
+#   )
+# 
+# eccc_df |>
+#   ggplot(aes(datetime, value, colour = group)) +
+#   geom_line()
+# 
+# plotly::ggplotly()
+# 
+# # compare sergey too ----
+# 
+# sg_pc <- read.csv('data/from-sergey/CainLower_presip_qaqc-ed.txt', skip = 1) |> 
+#   slice(2:n()) |> 
+#   mutate(datetime = as.POSIXct((as.numeric(MatLabTime) - 719529) * 86400, origin = "1970-01-01", tz = "UTC"),
+#          datetime = round(datetime, 'hour')) |> 
+#   select(datetime, Precip_raw, Precip_filtered) |> 
+#   filter(datetime > '2020-10-01',
+#          datetime < '2022-10-01',) |> 
+#   mutate(sm_raw = as.numeric(Precip_raw) - 3921,
+#          sm_filtered = as.numeric(Precip_filtered) - 3853) |> 
+#   select(datetime, sm_raw, sm_filtered) |> 
+#   pivot_longer(!datetime, names_to = 'group')
+# 
+# compare_df <- rbind(eccc_df, sg_pc) 
+# 
+# compare_df |> 
+#   ggplot(aes(datetime, value, colour = group)) + 
+#   geom_line()
+# 
+# g <- plotly::ggplotly()
+# 
+# htmltools::save_html(g, 'data/from-sergey/compare_sergey_eccc_precip_qaqc_interactive_plot.html')
+# 
+# write.csv(compare_df, 'data/from-sergey/compare_sergey_eccc_precip_qaqc.csv',row.names = F)
   
-## ---- 2 - apply weighing gauge 2 ----

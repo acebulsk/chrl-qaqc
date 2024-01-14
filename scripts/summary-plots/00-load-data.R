@@ -4,7 +4,7 @@ qaqc_data_path <- paste0('data/qaqc/qaqc_', cur_stn, '.rds')
 
 # load data
 
-if(!file.exists(raw_data_path)){
+# if(!file.exists(raw_data_path)){
   print(paste("Starting data download from server for", cur_stn))
   
   query <-
@@ -15,11 +15,21 @@ if(!file.exists(raw_data_path)){
   wx_raw <- dbGetQuery(conn, query) |> 
     rename(datetime = DateTime)
   
+  query <-
+    paste0("SELECT DateTime, Snow_Depth FROM qaqc_",
+           cur_stn,
+           ";")
+  
+  sd_qc <- dbGetQuery(conn, query) |> 
+    rename(datetime = DateTime, Snow_Depth_qaqc = Snow_Depth)
+  
+  wx_raw <- left_join(wx_raw, sd_qc)
+  
   saveRDS(wx_raw, raw_data_path)
   print(paste("Finished data download from server for", cur_stn))
   
-} else{
-  print(paste("Raw file already exists for", cur_stn))
-  
-  wx_raw <- readRDS(raw_data_path) 
-}
+# } else{
+#   print(paste("Raw file already exists for", cur_stn))
+#   
+#   wx_raw <- readRDS(raw_data_path) 
+# }

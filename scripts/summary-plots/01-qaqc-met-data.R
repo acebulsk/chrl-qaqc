@@ -34,16 +34,16 @@ frac_records_required <- 0.9
 # start qaqc ----
 
 # make a continuous time series 
-date_seq <- wxlogR::datetime_seq_full(met_df$datetime, timestep = logger_tstep)
+date_seq <- wxlogR::datetime_seq_full(wx_raw$datetime, timestep = 60*60)
 
-missing_records <- length(date_seq) - nrow(met_df)
+missing_records <- length(date_seq) - nrow(wx_raw)
 
 print(paste('The number of records missing is: ', missing_records))
 
 date_seq_df <- data.frame(datetime = date_seq)
 
 df_cont <- date_seq_df |> 
-  left_join(met_df, by = 'datetime')
+  left_join(wx_raw, by = 'datetime')
 
 ## station specific qaqc ---- 
 
@@ -53,13 +53,13 @@ wx_raw_met_long <- wx_raw |> pivot_longer(c('Air_Temp',
                                             'Snow_Depth',
                                             'Solar_Rad'))
 
-# wx_raw_met_long |>
-#   filter(WatYr == '2021') |>
-#   ggplot(aes(datetime, value, colour = name)) + 
-#   geom_line() +
-#   facet_wrap(~name, nrow = 5, scales = 'free_y')
-# 
-# plotly::ggplotly()
+wx_raw_met_long |>
+  filter(WatYr == '2023') |>
+  ggplot(aes(datetime, value, colour = name)) +
+  geom_line() +
+  facet_wrap(~name, nrow = 5, scales = 'free_y')
+
+plotly::ggplotly()
 
 ### mount cayley ----
 
@@ -148,7 +148,8 @@ if(all(at_spike_dates == 0)){
     CRHMr::deleteSpikes(
       colnum = at_col,
       threshold = -at_spike,
-      spike_direction = 'low'
+      spike_direction = 'low',
+      logfile = paste0('logs/', cur_stn, '_deletes.csv')
     )
 }
 
@@ -171,7 +172,8 @@ if(all(at_flatline_dates == 0)){
   
   at_flatline_del <- at_spike_delete |> 
     filter(is.na(Air_Temp) == F) |> 
-    CRHMr::deleteFlatLines(at_col, window_size = flatline_window)
+    CRHMr::deleteFlatLines(at_col, window_size = flatline_window,
+                           logfile = paste0('logs/', cur_stn, '_deletes.csv'))
 }
 
 
@@ -208,7 +210,8 @@ if(all(at_spike_dates == 0)){
       lead_window = lead_window,
       lag_window = lag_window,
       number_sd = at_sd,
-      include_start_end = F
+      include_start_end = F,
+      logfile = paste0('logs/', cur_stn, '_deletes.csv')
     )
 }
 

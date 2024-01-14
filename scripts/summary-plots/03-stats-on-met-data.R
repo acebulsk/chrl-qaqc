@@ -22,70 +22,75 @@ qc_fill_data$records_filter <- lubridate::days_in_month(qc_fill_data$datetime)*2
 # avgs for over all years, but do not include the current year
 glob_avg <- qc_fill_data |> 
   filter(year != max_year) |> 
-  group_by(month_num) |> 
+  pivot_longer(c(Air_Temp, Snow_Depth_qaqc)) |>
+  group_by(month_num, name) |> 
+  filter(is.na(value) == F) |> 
   mutate(n_records_in_month = n(),
          has_enough_records = n_records_in_month > records_filter) |> 
   filter(has_enough_records == T) |> 
   summarise(
-    glob_mean_monthly_temp = mean(Air_Temp, na.rm = T),
-    glob_min_monthly_temp = min(Air_Temp, na.rm = T),
-    glob_max_monthly_temp = max(Air_Temp, na.rm = T),
-    glob_upper_quantile = quantile(Air_Temp,0.95, na.rm = T),
-    glob_lower_quantile = quantile(Air_Temp, 0.05, na.rm = T)
+    glob_mean_monthly = mean(value, na.rm = T),
+    glob_min_monthly = min(value, na.rm = T),
+    glob_max_monthly = max(value, na.rm = T),
+    glob_upper_quantile = quantile(value,0.95, na.rm = T),
+    glob_lower_quantile = quantile(value, 0.05, na.rm = T)
   )
+
+saveRDS(glob_avg,
+        paste0(
+          'data/glob_average/',
+          cur_stn,
+          '_glob_average.rds'
+        ))
 
 # monthly avgs for each year
-monthly_air_temp_summary <- qc_fill_data |> 
-  group_by(year, month_num) |> 
+monthly_summary <- qc_fill_data |> 
+  pivot_longer(c(Air_Temp, Snow_Depth_qaqc)) |>
+  group_by(year, month_num, name) |> 
   mutate(n_records_in_month = n(),
          has_enough_records = n_records_in_month > records_filter) |> 
   filter(has_enough_records == T) |> 
   summarise(
-    mean_monthly_temp = mean(Air_Temp, na.rm = T),
-    max_monthly_temp = max(Air_Temp, na.rm = T),
-    min_monthly_temp = min(Air_Temp, na.rm = T),
-    upper_quantile = quantile(Air_Temp,0.95, na.rm = T),
-    lower_quantile = quantile(Air_Temp, 0.05, na.rm = T)
-  ) |> left_join(
-    glob_avg , by = 'month_num' # need the global quantiles for the graphs later
+    mean_monthly = mean(value, na.rm = T),
+    max_monthly = max(value, na.rm = T),
+    min_monthly = min(value, na.rm = T),
+    upper_quantile = quantile(value,0.95, na.rm = T),
+    lower_quantile = quantile(value, 0.05, na.rm = T)
   )
 
-qc_fill_data <- qc_fill_data |> left_join(
-  glob_avg , by = 'month_num'
-)
+saveRDS(monthly_summary,
+          paste0(
+            'data/monthly_normals_plot_data/',
+            cur_stn,
+            '_monthly_normals_data.rds'
+          ))
 
 # output monthly (all years separate) stats to pretty 
 
-tbl_out_monthly <- monthly_air_temp_summary |> 
-  mutate(station_name = cur_stn,
-         variable_name = 'air_temp',
-         unit = "deg. C") |> 
+tbl_out_monthly <- monthly_summary |> 
+  mutate(station_name = cur_stn) |> 
   select(station_name,
          year,
          month_num,
-         mean_monthly_value = mean_monthly_temp,
-         max_monthly_value = max_monthly_temp,
-         min_monthly_value = min_monthly_temp,
+         mean_monthly,
+         max_monthly,
+         min_monthly,
          lower_5th_percentile = lower_quantile,
          upper_95th_percentile = upper_quantile,
-         variable_name,
-         unit)
+         name)
 
 # aggregate years for overall monthly normals 
 
 tbl_out_monthly_normals <- glob_avg |> 
-  mutate(station_name = cur_stn,
-         variable_name = 'air_temp',
-         unit = "deg. C") |> 
+  mutate(station_name = cur_stn) |> 
   select(station_name,
          month_num,
-         mean_all_years_value = glob_mean_monthly_temp,
-         max_all_years_value = glob_max_monthly_temp,
-         min_all_years_value = glob_min_monthly_temp,
+         mean_all_years_value = glob_mean_monthly,
+         max_all_years_value = glob_max_monthly,
+         min_all_years_value = glob_min_monthly,
          lower_5th_percentile = glob_lower_quantile,
          upper_95th_percentile = glob_upper_quantile,
-         variable_name,
-         unit)
+         name)
 
 write.csv(tbl_out_monthly,
           paste0(
