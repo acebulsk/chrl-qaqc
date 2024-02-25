@@ -5,12 +5,12 @@
 
 wx_qc_path <- paste0('data/qaqc_chrl/qaqc_', cur_stn, '.rds') # updated to put qaqc data from sergey and julien into sep folder
 
-wx_qc_in <- readRDS(wx_qc_path)
+wx_qc_in <- readRDS(wx_qc_path) |> 
+  mutate(WatYr = weatherdash::wtr_yr(datetime))
 
 if(all(is.na(wx_qc_in$PC_Raw_Pipe)) == F){
   wx_qc <- wx_qc_in |> 
-  select(datetime, PC_Raw_Pipe) |> 
-  mutate(WatYr = weatherdash::wtr_yr(datetime))
+  select(datetime, PC_Raw_Pipe, WatYr)
 
 # setup constants ----
 
@@ -32,7 +32,7 @@ glob_hi <- 2500
 glob_lo <- -2500
 
 empty_amount_threshold <- 501 # this needs to be larger than the spike_loop_th so that spikes are not erroneously added as empties, i.e. we remove pos spikes first 
-max_gap_length <- 12 # max number of gaps to fill
+max_gap_length <- 21*24 # max number of gaps to fill
 
 spike_th <- 25
 spike_th_init <- 200
@@ -41,12 +41,6 @@ smooth_window <- 15
 polynomial_order <- 3
 small_drop_th <- 0.001 # this is used to eliminate 
 
-
-# stdev filtering params
-window_length <- 24 # 
-lead_window <- list(1:window_length) # around 3 days to round out diurnal cycling
-lag_window <- list(-1:-window_length)
-frac_records_required <- 0.9
 
 ## make a continuous time series ----
 
@@ -150,6 +144,8 @@ pc_empty_correct <- wx_glob_qc |>
 
 # plotly::ggplotly()
 
+# find and remove wat yrs missing lots of data
+
 # start qaqc ----
 
 ## ---- 1 - apply weighing gauge 1: FILL GAPS ----
@@ -160,23 +156,25 @@ pc_gap_fill <- weighingGauge1(obs = pc_empty_correct,
                               precipCol = 2, 
                               maxGapLength = max_gap_length)
 
-gap_list <- pc_gap_fill |> filter(is.na(PC_Raw_Pipe) == T) # set these back to NA later as they have longer gaps then we want to interpolate for
+gap_list <- pc_gap_fill |> filter(is.na(PC_Raw_Pipe) == T) # remaining gaps we fill below but need ids so we can set these back to NA later as they have longer gaps then we want to interpolate for
 
-pc_gap_fill <- weighingGauge1(obs = pc_gap_fill, 
-                              precipCol = 1, 
-                              maxGapLength = 9999) # fill all gaps for now but set these back to NA later using above list
+# crhmr function doesnt fill gaps at start so need to use alternative function to fill all gaps 
 
-pc_gap_fill$PC_Raw_Pipe[is.na(pc_gap_fill$PC_Raw_Pipe) == T] <- 0
+pc_gap_fill <- pc_gap_fill |> 
+  mutate(
+    PC_Raw_Pipe = 
+      imputeTS::na_interpolation(PC_Raw_Pipe, maxgap = 999999))
 
-findGaps(pc_gap_fill, gapfile = paste0('logs/', cur_stn, '_pc_gaps.csv'))
 
-# pc_gap_fill |> 
-#   ggplot(aes(datetime, PC_Raw_Pipe)) + 
+# pc_gap_fill |>
+#   ggplot(aes(datetime, PC_Raw_Pipe)) +
 #   geom_line()
 
 # plotly::ggplotly()
 
 ## ---- 2 - apply weighing gauge 2: REMOVE SPIKES ----
+
+pc_gap_fill <-  pc_gap_fill |> filter(is.na(PC_Raw_Pipe) == F)
 
 pc_spike_fill <- weighingGauge2(obs = pc_gap_fill, 
                                 precipCol = 1, 
@@ -235,19 +233,76 @@ pc_fltr <- weighingGauge4(pc_smooth,
 # 
 # plotly::ggplotly()
 
+# fill gaps by year ---- ... this was to fix occasions where we are missing a
+# few obs at the start of the water year which broke later calculations this
+# occurs frequently where we do the central coast circuit flight a few weeks
+# into October. Only fills gaps less than the max_gap_length th
+
+# set large gaps back to nan and then well loop through the years to check for short gaps at the start of the wat yr
+pc_fltr$interpolated_flag <- F 
+pc_fltr$interpolated_flag[pc_fltr$datetime %in% gap_list$datetime] <- T # if more than 12 consequtive nans were interpolated show a flag
+pc_fltr$PC_accumulated <- ifelse(pc_fltr$interpolated_flag, NA, pc_fltr$PC_Raw_Pipe_sg_filtered_PcpFiltPosT)
+pc_fltr$WtrYr <- weatherdash::wtr_yr(pc_fltr$datetime)
+
+# pc_fltr |>
+#   pivot_longer(c(PC_accumulated, PC_Raw_Pipe_sg_filtered_PcpFiltPosT)) |> 
+#   # filter(WatYr == '2019') |>
+#   ggplot(aes(datetime, value, colour = name)) +
+#   geom_line() +
+#   facet_grid(~WtrYr, scales = 'free')
+# plotly::ggplotly()
+
+# now set up looping through years to find small gaps again
+pc_fltr_zeroed_gps_fld <- data.frame()
+
+yrs <- pc_fltr$WtrYr |> unique()
+
+for(yr in yrs){
+  cur_df <- pc_fltr |> filter(WtrYr == yr)
+  
+  if(all(cur_df$PC_accumulated |> is.na())){
+    
+    print(paste0('Wat yr ',
+                 yr,
+                 ' has no data'))
+    
+  } else {
+    # use inputeTS instead of na_interpolation to handle gaps that start from the begining of the df which CRHM ignores
+    cur_df_filled <- cur_df |> 
+      mutate(
+        PC_short_gap_fill = 
+               imputeTS::na_interpolation(PC_accumulated, maxgap = max_gap_length),
+             short_gap_flag = ifelse((!is.na(PC_short_gap_fill) & is.na(PC_accumulated)), T, F))
+    
+    print(paste0('Number of short gaps filled at start of wat yr ',
+                 yr,
+                 ': ',
+                 sum(cur_df_filled$short_gap_flag)))
+    
+    pc_fltr_zeroed_gps_fld <- rbind(pc_fltr_zeroed_gps_fld, cur_df_filled)
+  }
+}
+
 # rezero oct 1sts ----
-pc_fltr_zeroed <- pc_fltr |> 
-  rename(PC_accumulated = PC_Raw_Pipe_sg_filtered_PcpFiltPosT) |> 
+pc_fltr_zeroed <- pc_fltr_zeroed_gps_fld |>
+  select(datetime,
+         WtrYr,
+         PC_accumulated = PC_short_gap_fill,
+         interpolated_flag,
+         short_gap_flag) |>
   mutate(
     PC_incremental = PC_accumulated - lag(PC_accumulated),
-    PC_incremental = ifelse(is.na(PC_incremental), 0, PC_incremental),
-    WtrYr = weatherdash::wtr_yr(datetime)) |> 
-  group_by(WtrYr) |> 
-  mutate(PC_accumulated_wtr_yr = cumsum(PC_incremental)) |> 
+    PC_incremental = ifelse(is.na(PC_incremental), 0, PC_incremental)
+  ) |>
+  group_by(WtrYr) |>
+  mutate(PC_accumulated_wtr_yr = cumsum(PC_incremental)) |>
   select(datetime, WtrYr, everything())
 
-pc_fltr_zeroed$interpolated_flag <- F 
-pc_fltr_zeroed$interpolated_flag[pc_fltr_zeroed$datetime %in% gap_list$datetime] <- T # if more than 12 consequtive nans were interpolated show a flag
+# keep the short gaps but set any large gaps as nan
+pc_fltr_zeroed$interpolated_flag <- ifelse(pc_fltr_zeroed$interpolated_flag & pc_fltr_zeroed$short_gap_flag, F, pc_fltr_zeroed$interpolated_flag)
+pc_fltr_zeroed$PC_accumulated <- ifelse(pc_fltr_zeroed$interpolated_flag, NA, pc_fltr_zeroed$PC_accumulated)
+pc_fltr_zeroed$PC_incremental <- ifelse(pc_fltr_zeroed$interpolated_flag, NA, pc_fltr_zeroed$PC_incremental)
+pc_fltr_zeroed$PC_accumulated_wtr_yr <- ifelse(pc_fltr_zeroed$interpolated_flag, NA, pc_fltr_zeroed$PC_accumulated_wtr_yr)
 
 # pc_fltr_zeroed |>
 #   # filter(WatYr == '2019') |>
@@ -258,10 +313,19 @@ pc_fltr_zeroed$interpolated_flag[pc_fltr_zeroed$datetime %in% gap_list$datetime]
 
 ## ---- 5 - write data out ----
 
-wx_qc_out <- wx_qc_in |> left_join(pc_fltr_zeroed, by = 'datetime') |> 
-  select(datetime, WtrYr, everything())
+wx_qc_out <- wx_qc_in |> 
+  select(-WatYr) |> 
+  left_join(pc_fltr_zeroed, by = 'datetime') |> 
+  select(
+    datetime,
+    WtrYr,
+    Air_Temp:PC_Raw_Pipe,
+    PC_accumulated,
+    PC_accumulated_wtr_yr,
+    PC_incremental
+  )
 
-saveRDS(wx_qc_out, paste0('data/qaqc_chrl_w_ac_pc/qaqc_', cur_stn, '.rds'))
+saveRDS(wx_qc_out, paste0('../../../code/r-pkgs/chrl-graph/data/qaqc_chrl_w_ac_pc/qaqc_', cur_stn, '.rds'))
 } else {
   print(paste("NO stand pipe data for ", cur_stn, "filling with NANS"))
   wx_qc_out <- wx_qc_in |> 
@@ -270,6 +334,6 @@ saveRDS(wx_qc_out, paste0('data/qaqc_chrl_w_ac_pc/qaqc_', cur_stn, '.rds'))
            PC_accumulated_wtr_yr = NA,
            interpolated_flag = F)
   
-  saveRDS(wx_qc_out, paste0('data/qaqc_chrl_w_ac_pc/qaqc_', cur_stn, '.rds'))
+  saveRDS(wx_qc_out, paste0('../../../code/r-pkgs/chrl-graph/data/qaqc_chrl_w_ac_pc/qaqc_', cur_stn, '.rds'))
 }
 
