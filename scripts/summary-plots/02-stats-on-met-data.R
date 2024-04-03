@@ -2,7 +2,7 @@
 
 library(tidyverse)
 
-qc_vars <- c("Air_Temp", "Snow_Depth", "SWE", "PC_accumulated_wtr_yr")
+qc_vars_all <- c("Air_Temp", "Snow_Depth", "SWE", "PC_accumulated_wtr_yr")
 
 gap_fill_path <- paste0('../../../code/r-pkgs/chrl-graph/data/qaqc_chrl_w_ac_pc/qaqc_', cur_stn, '.rds')
 
@@ -12,7 +12,7 @@ qc_fill_data <- readRDS(gap_fill_path)
 stopifnot("Air_Temp" %in% names(qc_fill_data))
 
 # Check if columns are numeric
-qc_vars <- qc_vars[sapply(qc_fill_data[qc_vars], is.numeric)]
+qc_vars_fltr <- qc_vars_all[sapply(qc_fill_data[qc_vars_all], is.numeric)]
 
 perc_records_fltr_temp <- 0.9
 perc_records_fltr_precip <- 0.25 # need less for cumulative stats
@@ -30,14 +30,36 @@ qc_fill_data$monthly_records_filter_precip_totals <- lubridate::days_in_month(qc
 n_yrs <- length(unique(qc_fill_data$WtrYr))
 
 # ensure stand pipe is not nan on oct 1 or do not include 
-good_pc_years <- qc_fill_data |> 
+good_pc_years_1 <- qc_fill_data |> 
   filter(plot_time == as.POSIXct('1900-10-01 00:00:00', tz = 'UTC')) |> 
   filter(!is.na(PC_accumulated_wtr_yr)) |> 
   pull(WtrYr)
 
+good_pc_years_2 <- qc_fill_data |> 
+  group_by(WtrYr) |> 
+  summarise(yearly_pc = sum(PC_incremental, na.rm = T),
+            nans = sum(is.na(PC_accumulated_wtr_yr)),
+            obs = n(),
+            frac_missing = nans/obs) |> 
+  filter(yearly_pc > 0,
+         frac_missing < .1) |> 
+  pull(WtrYr)
+
+good_pc_years_3 <- qc_fill_data |> 
+  group_by(WtrYr) |> 
+  filter(PC_accumulated_wtr_yr == 0) |> 
+  count() |> 
+  filter(n < 21 * 24) |> 
+  pull(WtrYr)
+
+good_pc_years <- intersect(good_pc_years_1, good_pc_years_2)
+
+good_pc_years <- intersect(good_pc_years, good_pc_years_3)
+
 # hourly stats
 hourly_stats <- qc_fill_data |> 
-  pivot_longer(all_of(qc_vars)) |>
+  select(datetime, plot_time, WtrYr, all_of(qc_vars_all)) |> 
+  pivot_longer(all_of(qc_vars_fltr)) |>
   group_by(plot_time, name) |> 
   mutate(n_records = n(),
          n_nans = sum(is.na(value)),
@@ -46,7 +68,7 @@ hourly_stats <- qc_fill_data |>
   filter(has_enough_records == T,
          is.na(value) == F, 
          is.na(plot_time) == F,
-         name == qc_vars[4] & WtrYr %in% good_pc_years | name %in% qc_vars[1:3]) |>
+         name == qc_vars_all[4] & WtrYr %in% good_pc_years | name %in% qc_vars_all[1:3]) |>
   summarise(
     mean = mean(value, na.rm = T),
     min = min(value, na.rm = T),
@@ -65,7 +87,7 @@ saveRDS(hourly_stats,
 # avgs for over all years, but do not include the current year
 # glob_avg <- qc_fill_data |> 
 #   filter(year != max_year) |> 
-#   pivot_longer(qc_vars) |>
+#   pivot_longer(qc_vars_fltr) |>
 #   group_by(month_num, name) |> 
 #   filter(is.na(value) == F) |> 
 #   mutate(n_records_in_month = n(),
@@ -105,7 +127,7 @@ monthly_total_pc <- qc_fill_data |>
 
 # monthly avgs for each year
 monthly_summary <- qc_fill_data |> 
-  pivot_longer(all_of(qc_vars)) |>
+  pivot_longer(all_of(qc_vars_fltr)) |>
   group_by(WtrYr, month_num, name) |> 
   mutate(
     n_records_in_month = n(),
@@ -113,7 +135,8 @@ monthly_summary <- qc_fill_data |>
          n_vals = n_records_in_month - n_nans,
          has_enough_records_temp = n_vals > monthly_records_filter_temp,
          has_enough_records_precip = n_vals > monthly_records_filter_precip) |> 
-  filter((name == qc_vars[1] & has_enough_records_temp == T) | (name %in% qc_vars[2:4] & has_enough_records_precip == T)) |> 
+  filter((name == qc_vars_all[1] & has_enough_records_temp == T) | (name %in% qc_vars_all[2:4] & has_enough_records_precip == T),
+         (name == qc_vars_all[4] & WtrYr %in% good_pc_years) | name %in% qc_vars_all[1:3]) |> 
   summarise(
     mean_monthly = mean(value, na.rm = T)#,
     # max_monthly = max(value, na.rm = T),
