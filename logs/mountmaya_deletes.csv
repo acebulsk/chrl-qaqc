@@ -1,0 +1,10 @@
+2024-01-13_14:56:27 findSpikes obs:obs 85 spikes found 
+2024-01-13_14:56:28 deleteSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F)85  values set to NA_real_ 
+2024-01-13_14:59:03 findSpikes obs:obs 85 spikes found 
+2024-01-13_14:59:03 deleteSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F)85  values set to NA_real_ 
+2024-01-13_14:59:35 findFlatlines obs:obs 4340 flatline vals found 
+2024-01-13_14:59:35 deleteFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F)4340  values set to NA_real_ 
+2024-01-19_16:24:23 findSpikes obs:obs 85 spikes found 
+2024-01-19_16:24:23 deleteSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F)85  values set to NA_real_ 
+2024-01-19_16:25:01 findFlatlines obs:obs 4340 flatline vals found 
+2024-01-19_16:25:02 deleteFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F)4340  values set to NA_real_ 

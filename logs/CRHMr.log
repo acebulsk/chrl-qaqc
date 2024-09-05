@@ -1,0 +1,237 @@
+2023-12-22_16:28:40 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 1 spikes found 
+2023-12-22_16:28:41 findSpikes obs:obs 1 spikes found 
+2023-12-22_16:28:41 deleteSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F)1  values set to NA_real_ 
+2023-12-22_16:28:45 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 42 flatline vals found 
+2023-12-22_16:28:53 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 1 spikes found 
+2023-12-22_16:28:57 findSpikes obs:obs 1 spikes found 
+2023-12-22_16:28:57 deleteSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F)1  values set to NA_real_ 
+2023-12-22_16:29:00 findSpikes obs:obs 1 spikes found 
+2023-12-22_16:29:00 deleteSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F)1  values set to NA_real_ 
+2023-12-22_16:29:01 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 42 flatline vals found 
+2023-12-22_16:29:01 findFlatlines obs:obs 42 flatline vals found 
+2023-12-22_16:29:01 deleteFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F)42  values set to NA_real_ 
+2023-12-22_16:29:17 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2023-12-22_16:30:19 insertMissing Obs:obs 
+2023-12-22_16:30:19 findGaps obs:qc_data variables:Air_Temp 
+2023-12-22_16:30:22 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2023-12-22_16:30:28 insertMissing Obs:obs 
+2023-12-22_16:30:28 findGaps obs:at_fill variables:Air_Temp 
+2023-12-22_16:32:34 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 1 spikes found 
+2023-12-22_16:32:34 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 42 flatline vals found 
+2023-12-22_16:32:40 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2023-12-22_16:33:40 insertMissing Obs:obs 
+2023-12-22_16:33:40 findGaps obs:qc_data variables:Air_Temp 
+2023-12-22_16:33:40 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2023-12-22_16:33:41 insertMissing Obs:obs 
+2023-12-22_16:33:41 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_14:56:27 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 85 spikes found 
+2024-01-13_14:56:53 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 4340 flatline vals found 
+2024-01-13_14:59:03 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 85 spikes found 
+2024-01-13_14:59:18 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 4340 flatline vals found 
+2024-01-13_14:59:44 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_14:59:46 insertMissing Obs:obs 
+2024-01-13_14:59:46 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_14:59:47 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_14:59:49 insertMissing Obs:obs 
+2024-01-13_14:59:49 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_14:59:56 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 2 spikes found 
+2024-01-13_14:59:56 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 99 flatline vals found 
+2024-01-13_15:00:01 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:00:02 insertMissing Obs:obs 
+2024-01-13_15:00:02 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:00:03 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:00:04 insertMissing Obs:obs 
+2024-01-13_15:00:04 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:00:11 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 1 spikes found 
+2024-01-13_15:00:11 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 63 flatline vals found 
+2024-01-13_15:00:16 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:00:17 insertMissing Obs:obs 
+2024-01-13_15:00:17 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:00:18 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:00:18 insertMissing Obs:obs 
+2024-01-13_15:00:18 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:00:25 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 17 spikes found 
+2024-01-13_15:00:25 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 6 flatline vals found 
+2024-01-13_15:00:29 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:00:29 insertMissing Obs:obs 
+2024-01-13_15:00:29 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:00:30 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:00:31 insertMissing Obs:obs 
+2024-01-13_15:00:31 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:00:37 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 1 spikes found 
+2024-01-13_15:00:37 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 106 flatline vals found 
+2024-01-13_15:00:43 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:00:44 insertMissing Obs:obs 
+2024-01-13_15:00:44 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:00:45 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:00:46 insertMissing Obs:obs 
+2024-01-13_15:00:46 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:00:53 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 80 spikes found 
+2024-01-13_15:00:53 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 27 flatline vals found 
+2024-01-13_15:00:59 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:01:00 insertMissing Obs:obs 
+2024-01-13_15:01:00 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:01:01 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:01:02 insertMissing Obs:obs 
+2024-01-13_15:01:02 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:01:09 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 5 spikes found 
+2024-01-13_15:01:09 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 363 flatline vals found 
+2024-01-13_15:01:19 findStdevSpikeWindow obs:at_spike_delete_nonan 4 spikes found with standard deviations 25 above/below the mean using the rolling window method  
+2024-01-13_15:01:29 findStdevSpikeWindow obs:obs 4 spikes found with standard deviations 25 above/below the mean using the rolling window method  
+2024-01-13_15:01:31 insertMissing Obs:obs 
+2024-01-13_15:01:31 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:01:33 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:01:35 insertMissing Obs:obs 
+2024-01-13_15:01:35 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:01:43 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 1 spikes found 
+2024-01-13_15:01:43 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) The obs col has no flat lines 
+2024-01-13_15:01:50 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:01:51 insertMissing Obs:obs 
+2024-01-13_15:01:51 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:01:52 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:01:53 insertMissing Obs:obs 
+2024-01-13_15:01:53 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:02:00 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 2 spikes found 
+2024-01-13_15:02:00 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 70 flatline vals found 
+2024-01-13_15:02:10 findStdevSpikeWindow obs:at_spike_delete_nonan 1 spikes found with standard deviations 25 above/below the mean using the rolling window method  
+2024-01-13_15:02:19 findStdevSpikeWindow obs:obs 1 spikes found with standard deviations 25 above/below the mean using the rolling window method  
+2024-01-13_15:02:21 insertMissing Obs:obs 
+2024-01-13_15:02:21 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:02:22 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:02:23 insertMissing Obs:obs 
+2024-01-13_15:02:23 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:02:30 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 1 spikes found 
+2024-01-13_15:02:31 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) The obs col has no flat lines 
+2024-01-13_15:02:37 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:02:39 insertMissing Obs:obs 
+2024-01-13_15:02:39 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:02:40 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:02:42 insertMissing Obs:obs 
+2024-01-13_15:02:42 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:02:50 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 4 spikes found 
+2024-01-13_15:02:50 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) The obs col has no flat lines 
+2024-01-13_15:02:57 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:02:58 insertMissing Obs:obs 
+2024-01-13_15:02:58 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:02:59 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:03:00 insertMissing Obs:obs 
+2024-01-13_15:03:00 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:03:08 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) No spikes found 
+2024-01-13_15:03:08 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) The obs col has no flat lines 
+2024-01-13_15:03:14 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:03:16 insertMissing Obs:obs 
+2024-01-13_15:03:16 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:03:18 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:03:20 insertMissing Obs:obs 
+2024-01-13_15:03:20 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:03:28 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 2 spikes found 
+2024-01-13_15:03:28 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) The obs col has no flat lines 
+2024-01-13_15:03:34 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:03:37 insertMissing Obs:obs 
+2024-01-13_15:03:37 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:03:38 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:03:41 insertMissing Obs:obs 
+2024-01-13_15:03:41 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:03:48 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 117 spikes found 
+2024-01-13_15:03:48 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 44 flatline vals found 
+2024-01-13_15:03:54 findStdevSpikeWindow obs:at_spike_delete_nonan 3 spikes found with standard deviations 25 above/below the mean using the rolling window method  
+2024-01-13_15:04:01 findStdevSpikeWindow obs:obs 3 spikes found with standard deviations 25 above/below the mean using the rolling window method  
+2024-01-13_15:04:03 insertMissing Obs:obs 
+2024-01-13_15:04:03 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:04:04 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:04:05 insertMissing Obs:obs 
+2024-01-13_15:04:05 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:04:11 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) No spikes found 
+2024-01-13_15:04:11 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) The obs col has no flat lines 
+2024-01-13_15:04:13 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:04:15 insertMissing Obs:obs 
+2024-01-13_15:04:15 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:04:17 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:04:19 insertMissing Obs:obs 
+2024-01-13_15:04:19 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:04:26 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 26 spikes found 
+2024-01-13_15:04:26 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 143 flatline vals found 
+2024-01-13_15:04:29 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:04:30 insertMissing Obs:obs 
+2024-01-13_15:04:30 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:04:30 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:04:31 insertMissing Obs:obs 
+2024-01-13_15:04:31 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:04:39 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) No spikes found 
+2024-01-13_15:04:39 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 50 flatline vals found 
+2024-01-13_15:04:43 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:04:44 insertMissing Obs:obs 
+2024-01-13_15:04:44 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:04:45 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:04:46 insertMissing Obs:obs 
+2024-01-13_15:04:46 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:05:18 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 1 spikes found 
+2024-01-13_15:05:19 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 42 flatline vals found 
+2024-01-13_15:05:25 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:05:25 insertMissing Obs:obs 
+2024-01-13_15:05:25 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:05:26 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:05:27 insertMissing Obs:obs 
+2024-01-13_15:05:27 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:05:35 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 1 spikes found 
+2024-01-13_15:05:35 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 87 flatline vals found 
+2024-01-13_15:05:42 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:05:43 insertMissing Obs:obs 
+2024-01-13_15:05:43 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:05:44 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:05:45 insertMissing Obs:obs 
+2024-01-13_15:05:45 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:05:53 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) No spikes found 
+2024-01-13_15:05:53 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 139 flatline vals found 
+2024-01-13_15:06:02 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:06:03 insertMissing Obs:obs 
+2024-01-13_15:06:03 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:06:05 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:06:06 insertMissing Obs:obs 
+2024-01-13_15:06:06 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:06:12 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) No spikes found 
+2024-01-13_15:06:12 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 195 flatline vals found 
+2024-01-13_15:06:18 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:06:19 insertMissing Obs:obs 
+2024-01-13_15:06:19 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:06:20 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:06:21 insertMissing Obs:obs 
+2024-01-13_15:06:21 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:06:28 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 34 spikes found 
+2024-01-13_15:06:29 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 256 flatline vals found 
+2024-01-13_15:06:36 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:06:37 insertMissing Obs:obs 
+2024-01-13_15:06:37 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:06:38 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:06:39 insertMissing Obs:obs 
+2024-01-13_15:06:39 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:06:46 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) No spikes found 
+2024-01-13_15:06:46 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 97 flatline vals found 
+2024-01-13_15:06:52 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:06:53 insertMissing Obs:obs 
+2024-01-13_15:06:53 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:06:54 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:06:55 insertMissing Obs:obs 
+2024-01-13_15:06:56 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:07:02 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) No spikes found 
+2024-01-13_15:07:02 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 54 flatline vals found 
+2024-01-13_15:07:10 findStdevSpikeWindow obs:at_spike_delete_nonan No spikes found 
+2024-01-13_15:07:11 insertMissing Obs:obs 
+2024-01-13_15:07:11 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:07:13 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:07:14 insertMissing Obs:obs 
+2024-01-13_15:07:14 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_15:07:21 findSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F) 20 spikes found 
+2024-01-13_15:07:27 findFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F) 4124 flatline vals found 
+2024-01-13_15:07:43 findStdevSpikeWindow obs:at_spike_delete_nonan 2 spikes found with standard deviations 25 above/below the mean using the rolling window method  
+2024-01-13_15:07:52 findStdevSpikeWindow obs:obs 2 spikes found with standard deviations 25 above/below the mean using the rolling window method  
+2024-01-13_15:07:53 insertMissing Obs:obs 
+2024-01-13_15:07:53 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_15:07:55 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_15:07:56 insertMissing Obs:obs 
+2024-01-13_15:07:56 findGaps obs:at_fill variables:Air_Temp 
+2024-01-13_16:31:07 insertMissing Obs:obs 
+2024-01-13_16:31:07 findGaps obs:qc_data variables:Air_Temp 
+2024-01-13_16:31:10 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-13_16:31:12 insertMissing Obs:obs 
+2024-01-13_16:31:12 findGaps obs:at_fill variables:Air_Temp 

@@ -1,0 +1,4 @@
+2024-01-13_15:07:02 findFlatlines obs:obs 54 flatline vals found 
+2024-01-13_15:07:03 deleteFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F)54  values set to NA_real_ 
+2024-01-19_16:21:30 findFlatlines obs:obs 54 flatline vals found 
+2024-01-19_16:21:30 deleteFlatlines obs:filter(at_spike_delete, is.na(Air_Temp) == F)54  values set to NA_real_ 

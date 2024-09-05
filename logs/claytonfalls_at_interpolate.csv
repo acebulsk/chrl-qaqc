@@ -1,0 +1,9 @@
+2024-01-19_15:54:54 interpolate dataframe:sd_raw Variables:Snow_Depth_qaqc_nogaps methods:linear maxlength:5 
+2024-01-19_15:55:31 interpolate dataframe:sd_raw Variables:Snow_Depth_qaqc methods:linear maxlength:5 
+2024-01-19_15:56:22 interpolate dataframe:sd_raw Variables:Snow_Depth_qaqc_filled methods:linear maxlength:5 
+2024-01-19_15:57:19 interpolate dataframe:sd_raw Variables:Snow_Depth_qaqc_filled methods:linear maxlength:5 
+2024-01-19_15:57:21 interpolate dataframe:sd_raw Variables:Snow_Depth_qaqc methods:linear maxlength:5 
+2024-01-19_15:57:58 interpolate dataframe:sd_raw Variables:Snow_Depth_qaqc methods:linear maxlength:5 
+2024-01-19_15:58:16 interpolate dataframe:sd_raw Variables:Snow_Depth_qaqc methods:linear maxlength:1440 
+2024-01-19_16:17:15 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 
+2024-01-19_16:19:59 interpolate dataframe:qc_data Variables:Air_Temp methods:linear maxlength:3 

@@ -1,0 +1,4 @@
+2024-01-13_15:01:43 findSpikes obs:obs 1 spikes found 
+2024-01-13_15:01:43 deleteSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F)1  values set to NA_real_ 
+2024-01-20_12:06:29 findSpikes obs:obs 1 spikes found 
+2024-01-20_12:06:29 deleteSpikes obs:filter(at_threhsold, is.na(Air_Temp) == F)1  values set to NA_real_ 
