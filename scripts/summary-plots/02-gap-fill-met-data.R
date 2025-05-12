@@ -29,6 +29,8 @@ if(file.exists(qaqc_data_path)){
     warning(paste0(cur_stn, " Air temp still has gaps."))
   }
   
+  
+  
   # check if we have any snowdepth data 
   
   if("Snow_Depth_qaqc" %in% colnames(wx_raw)){

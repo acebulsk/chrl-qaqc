@@ -8,6 +8,7 @@ wx_qc_path <- paste0('data/qaqc_chrl/qaqc_', cur_stn, '.rds') # updated to put q
 wx_qc_in <- readRDS(wx_qc_path) |> 
   mutate(WatYr = weatherdash::wtr_yr(datetime))
 
+
 if(all(is.na(wx_qc_in$PC_Raw_Pipe)) == F){
   wx_qc <- wx_qc_in |> 
   select(datetime, PC_Raw_Pipe, WatYr)
@@ -255,8 +256,6 @@ pc_fltr$WtrYr <- weatherdash::wtr_yr(pc_fltr$datetime)
 # now set up looping through years to find small gaps again
 pc_fltr_zeroed_gps_fld <- data.frame()
 
-yrs <- pc_fltr$WtrYr |> unique()
-
 for(yr in yrs){
   cur_df <- pc_fltr |> filter(WtrYr == yr)
   
@@ -304,12 +303,12 @@ pc_fltr_zeroed$PC_accumulated <- ifelse(pc_fltr_zeroed$interpolated_flag, NA, pc
 pc_fltr_zeroed$PC_incremental <- ifelse(pc_fltr_zeroed$interpolated_flag, NA, pc_fltr_zeroed$PC_incremental)
 pc_fltr_zeroed$PC_accumulated_wtr_yr <- ifelse(pc_fltr_zeroed$interpolated_flag, NA, pc_fltr_zeroed$PC_accumulated_wtr_yr)
 
-# pc_fltr_zeroed |>
-#   # filter(WatYr == '2019') |>
-#   ggplot(aes(datetime, PC_accumulated_wtr_yr)) +
-#   geom_line() +
-#   facet_wrap(~WtrYr, scales = 'free')
-# plotly::ggplotly()
+pc_fltr_zeroed |>
+  # filter(WatYr == '2019') |>
+  ggplot(aes(datetime, PC_accumulated_wtr_yr)) +
+  geom_line() +
+  facet_wrap(~WtrYr, scales = 'free')
+plotly::ggplotly()
 
 ## ---- 5 - write data out ----
 

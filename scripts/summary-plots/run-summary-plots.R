@@ -1,6 +1,5 @@
-# main script to create the stats fuls and output some summary plots
-# these stats files are currently used at viu-hydromet-wx.ca for the stats pages
-
+# script to run the full summary plot process
+# NOTE HAVE TO STEP THROUGH THIS LINE BY LINE TO AVOID EXTERNAL POINTER ERROR
 # setup ----
 
 library(dplyr)
